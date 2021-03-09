@@ -10,8 +10,8 @@ import (
 func TestSchemaJSON(t *testing.T) {
 	t.Parallel()
 	s := search.NewSchema(search.SchemaParams{
-		SearchFields:  []string{"firstname", "surname", "postcode"},
-		KeywordFields: []string{"gender"},
+		SearchFields: []string{"firstname", "surname", "postcode"},
+		Fields:       []search.Field{{Name: "gender", Type: "keyword"}},
 	})
 	// note: the tab spacing here very important, it just does not look nice formatted
 	const expected = `{

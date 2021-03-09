@@ -25,8 +25,14 @@ type schemaProperties struct {
 type SchemaParams struct {
 	// SearchFields defines fields used in search as you type
 	SearchFields []string
-	// KeywordFields defines fields that can be used for aggregations such as terms
-	KeywordFields []string
+	// Fields allow custom types to be set for fields e.g. date
+	Fields []Field
+}
+
+// Field defined a field and its mapping type
+type Field struct {
+	Name string
+	Type string
 }
 
 // NewSchema returns a Schema with the mappings for the input fields set as search_as_you_type
@@ -36,8 +42,8 @@ func NewSchema(params SchemaParams) *Schema {
 	for _, field := range params.SearchFields {
 		s.Mappings.Properties[field] = schemaProperties{Type: typeSearchAsYouType}
 	}
-	for _, field := range params.KeywordFields {
-		s.Mappings.Properties[field] = schemaProperties{Type: typeKeyword}
+	for _, field := range params.Fields {
+		s.Mappings.Properties[field.Name] = schemaProperties{Type: field.Type}
 	}
 	return s
 }

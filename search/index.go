@@ -3,6 +3,7 @@ package search
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
@@ -99,7 +100,7 @@ func (i *Index) InsertDocument(ctx context.Context, id string, doc interface{}) 
 }
 
 // Search returns results for a given search terms
-func (i *Index) Search(ctx context.Context, params QueryParams) error {
+func (i *Index) Search(ctx context.Context, params QueryParams) ([]byte, error) {
 	req := esapi.SearchRequest{
 		Index:  []string{i.Name},
 		Body:   esutil.NewJSONReader(i.Query.Search(params)),
@@ -109,13 +110,12 @@ func (i *Index) Search(ctx context.Context, params QueryParams) error {
 	}
 	resp, err := req.Do(context.Background(), i.Client)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 	if resp.IsError() {
 		fmt.Println(resp)
-		return parseError(resp.Body)
+		return nil, parseError(resp.Body)
 	}
-	fmt.Println(resp)
-	return nil
+	return ioutil.ReadAll(resp.Body)
 }

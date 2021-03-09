@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/elastic/go-elasticsearch/v7"
@@ -73,8 +74,10 @@ func main() {
 		es,
 		"testing",
 		search.SchemaParams{
-			SearchFields:  []string{"firstname", "lastname", "postcode"},
-			KeywordFields: []string{"gender"},
+			SearchFields: []string{"firstname", "lastname", "postcode"},
+			Fields: []search.Field{
+				{Name: "gender", Type: "keyword"},
+			},
 		},
 	)
 	err = index.Delete(ctx)
@@ -106,8 +109,9 @@ func main() {
 		Size: search.Int(1),
 		From: search.Int(1),
 	}
-	err = index.Search(ctx, params)
+	b, err := index.Search(ctx, params)
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println(string(b))
 }
