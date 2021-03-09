@@ -104,6 +104,8 @@ func (i *Index) Search(ctx context.Context, params QueryParams) error {
 		Index:  []string{i.Name},
 		Body:   esutil.NewJSONReader(i.Query.Search(params)),
 		Pretty: true,
+		Size:   params.Size,
+		From:   params.From,
 	}
 	resp, err := req.Do(context.Background(), i.Client)
 	if err != nil {

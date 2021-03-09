@@ -40,6 +40,13 @@ type QueryParams struct {
 	Query   string
 	Terms   []Term
 	Filters []Filter
+	Size    *int
+	From    *int
+}
+
+// Int returns a pointer to an int
+func Int(i int) *int {
+	return &i
 }
 
 // Filter defines a field should only have given values

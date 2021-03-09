@@ -100,6 +100,8 @@ func main() {
 		Filters: []search.Filter{
 			{Field: "gender", Values: []string{"male", "female"}},
 		},
+		Size: search.Int(1),
+		From: search.Int(1),
 	}
 	err = index.Search(ctx, params)
 	if err != nil {
