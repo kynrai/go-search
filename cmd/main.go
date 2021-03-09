@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -106,12 +107,22 @@ func main() {
 		Sort: []search.Sort{
 			{Field: "gender", Direction: search.SortDesc},
 		},
-		Size: search.Int(1),
-		From: search.Int(1),
+		// Size: search.Int(1),
+		// From: search.Int(1),
 	}
 	b, err := index.Search(ctx, params)
 	if err != nil {
 		log.Fatal(err)
 	}
+	resp, err := search.ParseResponse(b)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var docs []Doc
+	err = resp.HitsSource(&docs)
+	if err != nil {
+		log.Fatal(err)
+	}
+	b, _ = json.MarshalIndent(docs, "", "\t")
 	fmt.Println(string(b))
 }
