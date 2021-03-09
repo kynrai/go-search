@@ -13,10 +13,12 @@ const (
 // Schema sets the mappings for the elasticsearch index
 type Schema struct {
 	Mappings struct {
-		Properties map[string]struct {
-			Type string `json:"type"`
-		} `json:"properties"`
+		Properties map[string]schemaProperties `json:"properties"`
 	} `json:"mappings"`
+}
+
+type schemaProperties struct {
+	Type string `json:"type"`
 }
 
 // SchemaParams collects all the schema data needed to build mappings
@@ -30,18 +32,12 @@ type SchemaParams struct {
 // NewSchema returns a Schema with the mappings for the input fields set as search_as_you_type
 func NewSchema(params SchemaParams) *Schema {
 	s := &Schema{}
-	s.Mappings.Properties = make(map[string]struct {
-		Type string "json:\"type\""
-	})
+	s.Mappings.Properties = make(map[string]schemaProperties)
 	for _, field := range params.SearchFields {
-		s.Mappings.Properties[field] = struct {
-			Type string "json:\"type\""
-		}{Type: typeSearchAsYouType}
+		s.Mappings.Properties[field] = schemaProperties{Type: typeSearchAsYouType}
 	}
 	for _, field := range params.KeywordFields {
-		s.Mappings.Properties[field] = struct {
-			Type string "json:\"type\""
-		}{Type: typeKeyword}
+		s.Mappings.Properties[field] = schemaProperties{Type: typeKeyword}
 	}
 	return s
 }

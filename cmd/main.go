@@ -100,6 +100,9 @@ func main() {
 		Filters: []search.Filter{
 			{Field: "gender", Values: []string{"male", "female"}},
 		},
+		Sort: []search.Sort{
+			{Field: "gender", Direction: search.SortDesc},
+		},
 		Size: search.Int(1),
 		From: search.Int(1),
 	}

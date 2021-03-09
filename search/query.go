@@ -20,7 +20,8 @@ type Query struct {
 			Filter *filterTerm `json:"filter,omitempty"`
 		} `json:"bool"`
 	} `json:"query"`
-	Aggs map[string]interface{} `json:"aggs"`
+	Sort map[string]string      `json:"sort,omitempty"`
+	Aggs map[string]interface{} `json:"aggs,omitempty"`
 }
 
 type filterTerm struct {
@@ -42,6 +43,7 @@ type QueryParams struct {
 	Filters []Filter
 	Size    *int
 	From    *int
+	Sort    []Sort
 }
 
 // Int returns a pointer to an int
@@ -64,6 +66,20 @@ type Term struct {
 	Name string
 	// Field name of the document to bucket for each value
 	Field string
+}
+
+type sortDirection string
+
+// sort directions
+const (
+	SortAsc  sortDirection = "asc"
+	SortDesc sortDirection = "desc"
+)
+
+// Sort defineds a field and direction to sort searches by
+type Sort struct {
+	Field     string
+	Direction sortDirection
 }
 
 // NewQuery returns a query with the search fields set to search_as_you_type ngrams
@@ -99,6 +115,13 @@ func (q *Query) Search(params QueryParams) *Query {
 			filters[filter.Field] = filter.Values
 		}
 		clone.Query.Bool.Filter = &filterTerm{Terms: filters}
+	}
+	if params.Sort != nil {
+		sorts := make(map[string]string)
+		for _, sort := range params.Sort {
+			sorts[sort.Field] = string(sort.Direction)
+		}
+		clone.Sort = sorts
 	}
 	return clone
 }
