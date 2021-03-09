@@ -2,7 +2,6 @@ package search_test
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/kynrai/go-search/search"
@@ -38,8 +37,6 @@ func TestSchemaJSON(t *testing.T) {
 	if err := s.JSON(buf); err != nil {
 		t.Fatal(err)
 	}
-	fmt.Println(expected)
-	fmt.Println(buf.String())
 	if expected != buf.String() {
 		t.Fatal("unexpected schema JSON output")
 	}

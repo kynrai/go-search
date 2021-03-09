@@ -99,10 +99,10 @@ func (i *Index) InsertDocument(ctx context.Context, id string, doc interface{}) 
 }
 
 // Search returns results for a given search terms
-func (i *Index) Search(ctx context.Context, query string, terms []Term) error {
+func (i *Index) Search(ctx context.Context, params QueryParams) error {
 	req := esapi.SearchRequest{
 		Index:  []string{i.Name},
-		Body:   esutil.NewJSONReader(i.Query.Search(query, terms)),
+		Body:   esutil.NewJSONReader(i.Query.Search(params)),
 		Pretty: true,
 	}
 	resp, err := req.Do(context.Background(), i.Client)

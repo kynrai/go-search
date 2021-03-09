@@ -92,9 +92,16 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-	err = index.Search(ctx, "sm", []search.Term{
-		{Name: "genders", Field: "gender"},
-	})
+	params := search.QueryParams{
+		Query: "smith",
+		Terms: []search.Term{
+			{Name: "genders", Field: "gender"},
+		},
+		Filters: []search.Filter{
+			{Field: "gender", Values: []string{"male", "female"}},
+		},
+	}
+	err = index.Search(ctx, params)
 	if err != nil {
 		log.Fatal(err)
 	}
