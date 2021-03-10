@@ -56,3 +56,8 @@ func (r *Response) HitsSource(v interface{}) error {
 	b, _ := json.Marshal(sources)
 	return json.Unmarshal(b, v)
 }
+
+// TotalHits conveniance method to return total number of results
+func (r *Response) TotalHits() int {
+	return r.Hits.Total.Value
+}

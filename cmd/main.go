@@ -125,4 +125,5 @@ func main() {
 	}
 	b, _ = json.MarshalIndent(docs, "", "\t")
 	fmt.Println(string(b))
+	fmt.Println(resp.TotalHits())
 }
