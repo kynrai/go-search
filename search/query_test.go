@@ -2,6 +2,7 @@ package search_test
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 
 	"github.com/kynrai/go-search/search"
@@ -50,20 +51,29 @@ func TestQueryJSON(t *testing.T) {
 	}
 }
 `
-	buf := &bytes.Buffer{}
 	params := search.QueryParams{
-		Query: "smith",
+		Query: "ja",
 		Terms: []search.Term{
 			{Name: "genders", Field: "gender"},
+			{Name: "locations", Field: "location"},
 		},
 		Filters: []search.Filter{
-			{Field: "gender", Values: []string{"male"}},
+			{Field: "gender", Values: []string{"male", "female"}},
+			{Field: "location", Values: []string{"London"}},
 		},
+		Sort: []search.Sort{
+			{Field: "gender", Direction: search.SortDesc},
+		},
+		// Size: search.Int(1),
+		// From: search.Int(1),
 	}
+
+	buf := &bytes.Buffer{}
 	search := q.Search(params)
 	if err := search.JSON(buf); err != nil {
 		t.Fatal(err)
 	}
+	fmt.Println(buf.String())
 	if expected != buf.String() {
 		t.Fatal("unexpected query JSON output")
 	}

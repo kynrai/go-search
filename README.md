@@ -18,6 +18,8 @@ For example if you had documents which you wanted to run search as you type acro
 
 Difficult to manage query syntax and response formats becomes:
 
+Full example [here](cmd/main.go)
+
 ```go
 index := search.NewIndex(
     es,

@@ -17,15 +17,17 @@ type Doc struct {
 	Lastname  string `json:"lastname"`
 	Postcode  string `json:"postcode"`
 	Gender    string `json:"gender"`
+	Location  string `json:"location"`
 }
 
 var docs = []*Doc{
 	{
 		ID:        "1",
-		Firstname: "John",
+		Firstname: "James",
 		Lastname:  "Smith",
 		Postcode:  "AB1 2CD",
 		Gender:    "male",
+		Location:  "London",
 	},
 	{
 		ID:        "2",
@@ -33,6 +35,7 @@ var docs = []*Doc{
 		Lastname:  "Smith",
 		Postcode:  "EF1 2GH",
 		Gender:    "female",
+		Location:  "London",
 	},
 	{
 		ID:        "3",
@@ -40,6 +43,7 @@ var docs = []*Doc{
 		Lastname:  "Jones",
 		Postcode:  "IJ1 2KL",
 		Gender:    "male",
+		Location:  "London",
 	},
 	{
 		ID:        "4",
@@ -47,6 +51,7 @@ var docs = []*Doc{
 		Lastname:  "Evans",
 		Postcode:  "MN1 2OP",
 		Gender:    "male",
+		Location:  "Tokyo",
 	},
 	{
 		ID:        "5",
@@ -54,6 +59,7 @@ var docs = []*Doc{
 		Lastname:  "Brown",
 		Postcode:  "QR1 2ST",
 		Gender:    "female",
+		Location:  "New York",
 	},
 	{
 		ID:        "6",
@@ -61,6 +67,15 @@ var docs = []*Doc{
 		Lastname:  "Ann",
 		Postcode:  "UV1 2WX",
 		Gender:    "female",
+		Location:  "Paris",
+	},
+	{
+		ID:        "6",
+		Firstname: "Janus",
+		Lastname:  "Alan",
+		Postcode:  "UV1 2WX",
+		Gender:    "male",
+		Location:  "Berlin",
 	},
 }
 
@@ -78,6 +93,7 @@ func main() {
 			SearchFields: []string{"firstname", "lastname", "postcode"},
 			Fields: []search.Field{
 				{Name: "gender", Type: "keyword"},
+				{Name: "location", Type: "keyword"},
 			},
 		},
 	)
@@ -97,12 +113,14 @@ func main() {
 		}
 	}
 	params := search.QueryParams{
-		Query: "smith",
+		Query: "ja",
 		Terms: []search.Term{
 			{Name: "genders", Field: "gender"},
+			{Name: "locations", Field: "location"},
 		},
 		Filters: []search.Filter{
 			{Field: "gender", Values: []string{"male", "female"}},
+			{Field: "location", Values: []string{"London", "Berlin"}},
 		},
 		Sort: []search.Sort{
 			{Field: "gender", Direction: search.SortDesc},
@@ -114,6 +132,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println(string(b))
 	resp, err := search.ParseResponse(b)
 	if err != nil {
 		log.Fatal(err)
@@ -123,7 +142,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	b, _ = json.MarshalIndent(docs, "", "\t")
+	b, _ = json.MarshalIndent(docs, "", "  ")
 	fmt.Println(string(b))
 	fmt.Println(resp.TotalHits())
 }

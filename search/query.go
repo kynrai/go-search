@@ -17,7 +17,7 @@ type Query struct {
 					Type   string   `json:"type"`
 				} `json:"multi_match"`
 			} `json:"must"`
-			Filter *filterTerm `json:"filter,omitempty"`
+			Filter []*filterTerm `json:"filter,omitempty"`
 		} `json:"bool"`
 	} `json:"query"`
 	Sort map[string]string      `json:"sort,omitempty"`
@@ -104,17 +104,20 @@ func (q *Query) Search(params QueryParams) *Query {
 	clone.Query.Bool.Must.MultiMatch.Query = params.Query
 	clone.Aggs = make(map[string]interface{})
 
-	if params.Terms != nil {
+	if len(params.Terms) > 0 {
 		for _, term := range params.Terms {
 			clone.Aggs[term.Name] = &aggTerms{Terms: aggTermsField{Field: term.Field}}
 		}
 	}
-	if params.Filters != nil {
-		filters := make(map[string][]string)
+	if len(params.Filters) > 0 {
+		filters := []*filterTerm{}
 		for _, filter := range params.Filters {
-			filters[filter.Field] = filter.Values
+			ft := &filterTerm{}
+			ft.Terms = make(map[string][]string)
+			ft.Terms[filter.Field] = filter.Values
+			filters = append(filters, ft)
 		}
-		clone.Query.Bool.Filter = &filterTerm{Terms: filters}
+		clone.Query.Bool.Filter = filters
 	}
 	if params.Sort != nil {
 		sorts := make(map[string]string)
