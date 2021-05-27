@@ -56,7 +56,7 @@ var docs = []*Doc{
 		Postcode:  "MN1 2OP",
 		Gender:    "male",
 		Location:  "Tokyo",
-		Tags:      []string{"Japnaese"},
+		Tags:      []string{"Japanese"},
 	},
 	{
 		ID:        "5",
@@ -122,18 +122,18 @@ func main() {
 		}
 	}
 	params := search.QueryParams{
-		Query: "brit",
-		Terms: []search.Term{
-			{Name: "genders", Field: "gender"},
-			{Name: "locations", Field: "location"},
-		},
-		Filters: []search.Filter{
-			{Field: "gender", Values: []string{"male", "female"}},
-			{Field: "location", Values: []string{"London", "Berlin"}},
-		},
-		Sort: []search.Sort{
-			{Field: "gender", Direction: search.SortDesc},
-		},
+		Query: "japan",
+		// Terms: []search.Term{
+		// 	{Name: "genders", Field: "gender"},
+		// 	{Name: "locations", Field: "location"},
+		// },
+		// Filters: []search.Filter{
+		// 	{Field: "gender", Values: []string{"male", "female"}},
+		// 	{Field: "location", Values: []string{"London", "Berlin"}},
+		// },
+		// Sort: []search.Sort{
+		// 	{Field: "gender", Direction: search.SortDesc},
+		// },
 		// Size: search.Int(1),
 		// From: search.Int(1),
 	}
