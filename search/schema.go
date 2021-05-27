@@ -27,6 +27,8 @@ type SchemaParams struct {
 	SearchFields []string
 	// Fields allow custom types to be set for fields e.g. date
 	Fields []Field
+	// Allow searching thorough arrays
+	Arrays []string
 }
 
 // Field defined a field and its mapping type

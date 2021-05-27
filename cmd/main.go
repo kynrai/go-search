@@ -12,12 +12,13 @@ import (
 
 // Doc is a document for the index
 type Doc struct {
-	ID        string `json:"id"`
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	Postcode  string `json:"postcode"`
-	Gender    string `json:"gender"`
-	Location  string `json:"location"`
+	ID        string   `json:"id"`
+	Firstname string   `json:"firstname"`
+	Lastname  string   `json:"lastname"`
+	Postcode  string   `json:"postcode"`
+	Gender    string   `json:"gender"`
+	Location  string   `json:"location"`
+	Tags      []string `json:"tags"`
 }
 
 var docs = []*Doc{
@@ -28,6 +29,7 @@ var docs = []*Doc{
 		Postcode:  "AB1 2CD",
 		Gender:    "male",
 		Location:  "London",
+		Tags:      []string{"Brit"},
 	},
 	{
 		ID:        "2",
@@ -36,6 +38,7 @@ var docs = []*Doc{
 		Postcode:  "EF1 2GH",
 		Gender:    "female",
 		Location:  "London",
+		Tags:      []string{"Brit"},
 	},
 	{
 		ID:        "3",
@@ -44,6 +47,7 @@ var docs = []*Doc{
 		Postcode:  "IJ1 2KL",
 		Gender:    "male",
 		Location:  "London",
+		Tags:      []string{"Brit"},
 	},
 	{
 		ID:        "4",
@@ -52,6 +56,7 @@ var docs = []*Doc{
 		Postcode:  "MN1 2OP",
 		Gender:    "male",
 		Location:  "Tokyo",
+		Tags:      []string{"Japnaese"},
 	},
 	{
 		ID:        "5",
@@ -60,6 +65,7 @@ var docs = []*Doc{
 		Postcode:  "QR1 2ST",
 		Gender:    "female",
 		Location:  "New York",
+		Tags:      []string{"Yank"},
 	},
 	{
 		ID:        "6",
@@ -68,6 +74,7 @@ var docs = []*Doc{
 		Postcode:  "UV1 2WX",
 		Gender:    "female",
 		Location:  "Paris",
+		Tags:      []string{"French"},
 	},
 	{
 		ID:        "6",
@@ -76,6 +83,7 @@ var docs = []*Doc{
 		Postcode:  "UV1 2WX",
 		Gender:    "male",
 		Location:  "Berlin",
+		Tags:      []string{"German"},
 	},
 }
 
@@ -95,6 +103,7 @@ func main() {
 				{Name: "gender", Type: "keyword"},
 				{Name: "location", Type: "keyword"},
 			},
+			Arrays: []string{"tags"},
 		},
 	)
 	err = index.Delete(ctx)
@@ -113,7 +122,7 @@ func main() {
 		}
 	}
 	params := search.QueryParams{
-		Query: "ja",
+		Query: "brit",
 		Terms: []search.Term{
 			{Name: "genders", Field: "gender"},
 			{Name: "locations", Field: "location"},

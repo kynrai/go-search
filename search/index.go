@@ -26,7 +26,7 @@ func NewIndex(client *elasticsearch.Client, name string, params SchemaParams) *I
 		Name:   name,
 		Params: params,
 		Schema: NewSchema(params),
-		Query:  NewQuery(params.SearchFields...),
+		Query:  NewQuery(params.SearchFields, params.Arrays),
 	}
 }
 

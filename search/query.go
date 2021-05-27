@@ -83,7 +83,7 @@ type Sort struct {
 }
 
 // NewQuery returns a query with the search fields set to search_as_you_type ngrams
-func NewQuery(fields ...string) *Query {
+func NewQuery(fields, arrays []string) *Query {
 	searchFields := []string{}
 	for _, field := range fields {
 		searchFields = append(searchFields,
@@ -91,6 +91,9 @@ func NewQuery(fields ...string) *Query {
 			fmt.Sprintf("%s._2gram", field),
 			fmt.Sprintf("%s._3gram", field),
 		)
+	}
+	for _, array := range arrays {
+		searchFields = append(searchFields, array)
 	}
 	q := &Query{}
 	q.Query.Bool.Must.MultiMatch.Type = "bool_prefix"
