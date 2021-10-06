@@ -124,6 +124,19 @@ func main() {
 
 	doSearch(ctx, search.QueryParams{
 		Query: "brit",
+		// Terms: []search.Term{
+		// 	{Name: "genders", Field: "gender"},
+		// 	{Name: "locations", Field: "location"},
+		// },
+		// Filters: []search.Filter{
+		// 	{Field: "gender", Values: []string{"male", "female"}},
+		// 	{Field: "location", Values: []string{"London", "Berlin"}},
+		// },
+		// Sort: []search.Sort{
+		// 	{Field: "gender", Direction: search.SortDesc},
+		// },
+		// Size: search.Int(1),
+		// From: search.Int(1),
 	}, index)
 
 	doSearch(ctx, search.QueryParams{
