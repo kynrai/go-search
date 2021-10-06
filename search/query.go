@@ -92,9 +92,8 @@ func NewQuery(fields, arrays []string) *Query {
 			fmt.Sprintf("%s._3gram", field),
 		)
 	}
-	for _, array := range arrays {
-		searchFields = append(searchFields, array)
-	}
+	searchFields = append(searchFields, arrays...)
+
 	q := &Query{}
 	q.Query.Bool.Must.MultiMatch.Type = "bool_prefix"
 	q.Query.Bool.Must.MultiMatch.Fields = searchFields
@@ -106,6 +105,8 @@ func (q *Query) Search(params QueryParams) *Query {
 	clone := q
 	clone.Query.Bool.Must.MultiMatch.Query = params.Query
 	clone.Aggs = make(map[string]interface{})
+	clone.Query.Bool.Filter = make([]*filterTerm, 0)
+	clone.Sort = make(map[string]string)
 
 	if len(params.Terms) > 0 {
 		for _, term := range params.Terms {
