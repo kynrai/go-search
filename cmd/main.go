@@ -121,8 +121,9 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-	params := search.QueryParams{
-		Query: "japan",
+
+	doSearch(ctx, search.QueryParams{
+		Query: "brit",
 		// Terms: []search.Term{
 		// 	{Name: "genders", Field: "gender"},
 		// 	{Name: "locations", Field: "location"},
@@ -136,12 +137,28 @@ func main() {
 		// },
 		// Size: search.Int(1),
 		// From: search.Int(1),
-	}
+	}, index)
+
+	doSearch(ctx, search.QueryParams{
+		Query: "brit",
+		Filters: []search.Filter{
+			{Field: "gender", Values: []string{"female"}},
+		},
+	}, index)
+
+	doSearch(ctx, search.QueryParams{
+		Query: "brit",
+	}, index)
+
+}
+
+func doSearch(ctx context.Context, params search.QueryParams, index *search.Index) {
+	fmt.Println("REQUEST START")
 	b, err := index.Search(ctx, params)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(string(b))
+	// fmt.Println(string(b))
 	resp, err := search.ParseResponse(b)
 	if err != nil {
 		log.Fatal(err)
@@ -153,5 +170,5 @@ func main() {
 	}
 	b, _ = json.MarshalIndent(docs, "", "  ")
 	fmt.Println(string(b))
-	fmt.Println(resp.TotalHits())
+	// fmt.Println(resp.TotalHits())
 }
