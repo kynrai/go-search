@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 
-	"github.com/elastic/go-elasticsearch/v7"
+	opensearch "github.com/opensearch-project/opensearch-go"
+
 	"github.com/kynrai/go-search/search"
 )
 
@@ -88,14 +91,21 @@ var docs = []*Doc{
 }
 
 func main() {
-	es, err := elasticsearch.NewDefaultClient()
+	os, err := opensearch.NewClient(opensearch.Config{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+		Username:  "admin",
+		Password:  "admin",
+		Addresses: []string{"https://localhost:9200"},
+	})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("failed to create client", err)
 	}
 
 	ctx := context.Background()
 	index := search.NewIndex(
-		es,
+		os,
 		"testing",
 		search.SchemaParams{
 			SearchFields: []string{"firstname", "lastname", "postcode"},
@@ -108,12 +118,12 @@ func main() {
 	)
 	err = index.Delete(ctx)
 	if err != nil {
-		log.Print(err)
+		log.Println("failed to delete index", err)
 	}
 
 	err = index.Create(ctx)
 	if err != nil {
-		log.Print(err)
+		log.Fatal("failed to create index ", err)
 	}
 	for _, doc := range docs {
 		err = index.InsertDocument(ctx, doc.ID, doc)
