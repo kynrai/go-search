@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/elastic/go-elasticsearch/v7"
-	"github.com/elastic/go-elasticsearch/v7/esapi"
-	"github.com/elastic/go-elasticsearch/v7/esutil"
+	opensearch "github.com/opensearch-project/opensearch-go"
+	opensearchapi "github.com/opensearch-project/opensearch-go/opensearchapi"
+	opensearchutil "github.com/opensearch-project/opensearch-go/opensearchutil"
 )
 
 // Index manages a search index
 type Index struct {
-	Client *elasticsearch.Client
+	Client *opensearch.Client
 	Name   string
 	Params SchemaParams
 	Schema *Schema
@@ -20,7 +20,7 @@ type Index struct {
 }
 
 // NewIndex returns a new managed search index with fields set to be the search_as_you_type fields
-func NewIndex(client *elasticsearch.Client, name string, params SchemaParams) *Index {
+func NewIndex(client *opensearch.Client, name string, params SchemaParams) *Index {
 	return &Index{
 		Client: client,
 		Name:   name,
@@ -32,9 +32,9 @@ func NewIndex(client *elasticsearch.Client, name string, params SchemaParams) *I
 
 // Create sets the mappings for an index on a server
 func (i *Index) Create(ctx context.Context) error {
-	req := esapi.IndicesCreateRequest{
+	req := opensearchapi.IndicesCreateRequest{
 		Index: i.Name,
-		Body:  esutil.NewJSONReader(i.Schema),
+		Body:  opensearchutil.NewJSONReader(i.Schema),
 	}
 	resp, err := req.Do(ctx, i.Client)
 	if err != nil {
@@ -49,7 +49,7 @@ func (i *Index) Create(ctx context.Context) error {
 
 // Delete an index
 func (i *Index) Delete(ctx context.Context) error {
-	req := esapi.IndicesDeleteRequest{
+	req := opensearchapi.IndicesDeleteRequest{
 		Index: []string{i.Name},
 	}
 	resp, err := req.Do(ctx, i.Client)
@@ -65,9 +65,9 @@ func (i *Index) Delete(ctx context.Context) error {
 
 // Update sets the mappings for an index on a server
 func (i *Index) Update(ctx context.Context) error {
-	req := esapi.IndicesCreateRequest{
+	req := opensearchapi.IndicesCreateRequest{
 		Index: i.Name,
-		Body:  esutil.NewJSONReader(i.Schema),
+		Body:  opensearchutil.NewJSONReader(i.Schema),
 	}
 	resp, err := req.Do(ctx, i.Client)
 	if err != nil {
@@ -82,10 +82,10 @@ func (i *Index) Update(ctx context.Context) error {
 
 // InsertDocument adds a document into the index
 func (i *Index) InsertDocument(ctx context.Context, id string, doc interface{}) error {
-	req := esapi.IndexRequest{
+	req := opensearchapi.IndexRequest{
 		Index:      i.Name,
 		DocumentID: id,
-		Body:       esutil.NewJSONReader(doc),
+		Body:       opensearchutil.NewJSONReader(doc),
 		Refresh:    "true",
 	}
 	resp, err := req.Do(context.Background(), i.Client)
@@ -101,9 +101,9 @@ func (i *Index) InsertDocument(ctx context.Context, id string, doc interface{}) 
 
 // Search returns results for a given search terms
 func (i *Index) Search(ctx context.Context, params QueryParams) ([]byte, error) {
-	req := esapi.SearchRequest{
+	req := opensearchapi.SearchRequest{
 		Index:  []string{i.Name},
-		Body:   esutil.NewJSONReader(i.Query.Search(params)),
+		Body:   opensearchutil.NewJSONReader(i.Query.Search(params)),
 		Pretty: true,
 		Size:   params.Size,
 		From:   params.From,
