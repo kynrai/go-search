@@ -97,7 +97,7 @@ func main() {
 		},
 		Username:  "admin",
 		Password:  "admin",
-		Addresses: []string{"https://localhost:9200"},
+		Addresses: []string{"https://admin:admin@localhost:9200"},
 	})
 	if err != nil {
 		log.Fatal("failed to create client", err)
