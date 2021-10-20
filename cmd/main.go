@@ -160,6 +160,21 @@ func main() {
 		Query: "brit",
 	}, index)
 
+	b, err := index.MatchAll(ctx, search.Int(10), search.Int(1))
+	if err != nil {
+		log.Fatal(err)
+	}
+	resp, err := search.ParseResponse(b)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var docs []Doc
+	err = resp.HitsSource(&docs)
+	if err != nil {
+		log.Fatal(err)
+	}
+	b, _ = json.MarshalIndent(docs, "", "  ")
+	fmt.Println(string(b))
 }
 
 func doSearch(ctx context.Context, params search.QueryParams, index *search.Index) {

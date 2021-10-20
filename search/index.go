@@ -2,7 +2,6 @@ package search
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 
 	opensearch "github.com/opensearch-project/opensearch-go"
@@ -114,7 +113,32 @@ func (i *Index) Search(ctx context.Context, params QueryParams) ([]byte, error) 
 	}
 	defer resp.Body.Close()
 	if resp.IsError() {
-		fmt.Println(resp)
+		return nil, parseError(resp.Body)
+	}
+	return ioutil.ReadAll(resp.Body)
+}
+
+// MatchAll returns all results, supporting pagination
+func (i *Index) MatchAll(ctx context.Context, size, from *int) ([]byte, error) {
+	var matchall struct {
+		Query struct {
+			MatchAll struct {
+			} `json:"match_all"`
+		} `json:"query"`
+	}
+	req := opensearchapi.SearchRequest{
+		Index:  []string{i.Name},
+		Body:   opensearchutil.NewJSONReader(matchall),
+		Pretty: true,
+		Size:   size,
+		From:   from,
+	}
+	resp, err := req.Do(context.Background(), i.Client)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.IsError() {
 		return nil, parseError(resp.Body)
 	}
 	return ioutil.ReadAll(resp.Body)
